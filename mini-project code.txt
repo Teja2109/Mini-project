@@ -1,0 +1,60 @@
+#define tpin 6  // ultrasonic sensor trigger pin
+#define epin 7  // ultrasonic sensor echo pin
+#define LM1 8   // left motor 1st pin 
+#define LM2 9   // left motor 2nd pin
+#define RM1 10  // right motor 1st pin
+#define RM2 11  // right motor 2nd pin
+long duration, distance;
+
+void setup()
+{
+  Serial.begin(9600); 
+  pinMode(LM1,OUTPUT);
+  pinMode(LM2,OUTPUT);  // set the motor pins
+  pinMode(RM1,OUTPUT);
+  pinMode(RM2,OUTPUT);
+  pinMode(tpin,OUTPUT); //set trigger pin as output 
+  pinMode(epin,OUTPUT); //set echo pin as input
+}
+
+void loop()
+{
+  digitalWrite(tpin,LOW);
+  delay(20);
+  digitalWrite(tpin,HIGH);  // transmission of waves 
+  delay(20);
+  duration=pulseIn(epin,HIGH);
+  distance=duration/58.2 ;
+  Serial.print(distance);
+  delay(20);
+  if (distance>14) // check whether if there is any obstacle in the range of 14cm
+  {
+    digitalWrite(LM1,HIGH); // move forward 
+    digitalWrite(LM2,LOW);
+    digitalWrite(RM1,HIGH);
+    digitalWrite(RM2,LOW);
+  } 
+  else // if there is any obstacle present in the range of 14cm
+  {
+    digitalWrite(LM1,LOW);  // stop
+    digitalWrite(LM2,LOW);
+    digitalWrite(RM1,LOW);
+    digitalWrite(RM2,LOW);
+    delay(200);
+    digitalWrite(LM1,LOW); // move backward
+    digitalWrite(LM2,HIGH);
+    digitalWrite(RM1,LOW);
+    digitalWrite(RM1,HIGH);
+    delay(200);
+    digitalWrite(LM1,LOW); // stop
+    digitalWrite(LM2,LOW);
+    digitalWrite(RM1,LOW);
+    digitalWrite(RM2,LOW);
+    delay(200);
+    digitalWrite(LM1,HIGH); // move right 
+    digitalWrite(LM2,LOW);
+    digitalWrite(RM1,LOW);
+    digitalWrite(RM1,LOW);
+    delay(200);
+  }
+}
